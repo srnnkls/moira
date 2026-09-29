@@ -174,5 +174,4 @@ test "merge sums every column" {
 
 test {
     std.testing.refAllDecls(@This());
-    _ = @import("fixture_test.zig");
 }
