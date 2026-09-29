@@ -1,0 +1,17 @@
+[tools]
+zig = "0.16.0"
+"github:facebookincubator/scrut" = "0.4.3"
+
+[tasks.build]
+run = "zig build -Doptimize=ReleaseSafe"
+
+[tasks.test]
+description = "Run unit tests in Debug and ReleaseSafe"
+run = ["zig build test", "zig build test -Doptimize=ReleaseSafe"]
+
+[tasks.test-integration]
+description = "Run scrut suites against the ReleaseSafe binary (one process per doc, in parallel)"
+run = [
+  "zig build -Doptimize=ReleaseSafe",
+  "export PATH=\"$PWD/zig-out/bin:$PATH\"; printf '%s\\n' tests/scrut/*.md | xargs -P0 -n1 scrut test",
+]
