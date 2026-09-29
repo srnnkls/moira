@@ -1,6 +1,6 @@
 # du(1) parity
 
-With `--du --allocated`, moira must print what the macOS `du` prints for the same flags.
+Without its own metric flags, moira must print what the macOS `du` prints for the same flags.
 Each case runs both over a fixture tree built in scrut's per-document tempdir and expects
 an empty diff.
 

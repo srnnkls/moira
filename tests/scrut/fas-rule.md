@@ -13,7 +13,7 @@ $ source "$TESTDIR"/_setup.sh
 
 ```scrut
 $ fas_hint 'du -sh ~/projects'
-HINT: On APFS `du` charges every clone and hard link in full and cannot see space a snapshot holds. `moira` takes du's flags: `moira --du -s PATH` reports each entry's fair share, `--exclusive` what deleting frees, `--pinned` what a snapshot still holds, and `moira --columns` shows all of them.
+HINT: On APFS `du` charges every clone and hard link in full and cannot see space a snapshot holds. `moira` prints what du prints and takes its flags; add `-S` for each entry's fair share, `-E` for what deleting frees, `-p` for what a snapshot still holds, or `-C` for all of them.
 ```
 
 ```scrut
@@ -24,7 +24,7 @@ HINT:
 ## Stays quiet otherwise
 
 ```scrut
-$ fas_hint 'moira --du -s .'
+$ fas_hint 'moira -Ss .'
 no hint
 ```
 

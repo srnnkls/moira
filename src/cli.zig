@@ -4,14 +4,14 @@ const std = @import("std");
 
 pub const Metric = enum { share, exclusive, pinned, allocated };
 pub const Symlinks = enum { never, arguments, always };
-pub const Layout = enum { automatic, du, columns };
+pub const Layout = enum { du, columns };
 pub const Units = union(enum) { blocks: u64, human_binary, human_decimal };
 
 pub const Options = struct {
     paths: std.ArrayList([]const u8) = .empty,
     ignore_masks: std.ArrayList([:0]const u8) = .empty,
-    metric: Metric = .share,
-    layout: Layout = .automatic,
+    metric: Metric = .allocated,
+    layout: Layout = .du,
     units: ?Units = null,
     symlinks: Symlinks = .never,
     max_depth: ?u32 = null,
@@ -93,6 +93,10 @@ fn apply_short_cluster(
                 return apply_value(options, gpa, flag, value);
             },
             'A' => options.apparent_size = true,
+            'C' => options.layout = .columns,
+            'E' => options.metric = .exclusive,
+            'S' => options.metric = .share,
+            'p' => options.metric = .pinned,
             'H' => options.symlinks = .arguments,
             'L' => options.symlinks = .always,
             'P' => options.symlinks = .never,
@@ -154,7 +158,6 @@ const LongFlag = enum {
     exclusive,
     pinned,
     allocated,
-    du,
     columns,
 };
 
@@ -198,7 +201,6 @@ fn apply_long(
         .exclusive => options.metric = .exclusive,
         .pinned => options.metric = .pinned,
         .allocated => options.metric = .allocated,
-        .du => options.layout = .du,
         .columns => options.layout = .columns,
         .@"max-depth", .threshold, .@"block-size", .exclude => unreachable,
     }
@@ -249,6 +251,19 @@ test "clustered short flags and inline values" {
     try std.testing.expectEqual(@as(usize, 2), options.paths.items.len);
 }
 
+test "defaults match du and metric letters override each other" {
+    var plain = try parse_for_test(&.{});
+    defer plain.deinit(std.testing.allocator);
+    try std.testing.expectEqual(Metric.allocated, plain.metric);
+    try std.testing.expectEqual(Layout.du, plain.layout);
+
+    var options = try parse_for_test(&.{ "-S", "-E", "-p", "-Cs" });
+    defer options.deinit(std.testing.allocator);
+    try std.testing.expectEqual(Metric.pinned, options.metric);
+    try std.testing.expectEqual(Layout.columns, options.layout);
+    try std.testing.expectEqual(@as(?u32, 0), options.max_depth);
+}
+
 test "unit flags override each other in order" {
     var options = try parse_for_test(&.{ "-h", "-k", "--si", "-m" });
     defer options.deinit(std.testing.allocator);
@@ -256,12 +271,12 @@ test "unit flags override each other in order" {
 }
 
 test "long flags take values inline or as the next argument" {
-    var options = try parse_for_test(&.{ "--max-depth=2", "--threshold", "1M", "--allocated", "--du" });
+    var options = try parse_for_test(&.{ "--max-depth=2", "--threshold", "1M", "--share", "--columns" });
     defer options.deinit(std.testing.allocator);
     try std.testing.expectEqual(@as(?u32, 2), options.max_depth);
     try std.testing.expectEqual(@as(?i64, 1 << 20), options.threshold_bytes);
-    try std.testing.expectEqual(Metric.allocated, options.metric);
-    try std.testing.expectEqual(Layout.du, options.layout);
+    try std.testing.expectEqual(Metric.share, options.metric);
+    try std.testing.expectEqual(Layout.columns, options.layout);
 }
 
 test "a double dash ends option parsing and a lone dash is a path" {

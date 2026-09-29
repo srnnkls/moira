@@ -29,7 +29,7 @@ make_clones() {
 
 du_parity() {
 	du "$@" >expected.out 2>&1
-	moira --du --allocated "$@" 2>&1 | sed 's/^moira:/du:/' >actual.out
+	moira "$@" 2>&1 | sed 's/^moira:/du:/' >actual.out
 	diff expected.out actual.out
 }
 
@@ -39,4 +39,8 @@ fas_hint() {
 		hook_event_name: "PreToolUse", tool_name: "Bash", tool_input: {command: $command}
 	}' | fas eval --global-config "$TESTDIR/../../rules/fas" --config /nonexistent 2>/dev/null |
 		jq -r '.hookSpecificOutput.additionalContext // "no hint"'
+}
+
+on_terminal() {
+	script -q /dev/null "$@" | tr -d '\r'
 }
