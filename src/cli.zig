@@ -24,6 +24,7 @@ pub const Options = struct {
     rounding_bytes: ?u64 = null,
     threshold_bytes: ?i64 = null,
     help: bool = false,
+    version: bool = false,
 
     pub fn deinit(options: *Options, gpa: std.mem.Allocator) void {
         options.paths.deinit(gpa);
@@ -148,6 +149,7 @@ const LongFlag = enum {
     @"block-size",
     exclude,
     help,
+    version,
     share,
     exclusive,
     pinned,
@@ -191,6 +193,7 @@ fn apply_long(
         .@"dereference-args" => options.symlinks = .arguments,
         .@"no-dereference" => options.symlinks = .never,
         .help => options.help = true,
+        .version => options.version = true,
         .share => options.metric = .share,
         .exclusive => options.metric = .exclusive,
         .pinned => options.metric = .pinned,

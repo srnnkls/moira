@@ -73,3 +73,8 @@ $ { moira --du -k -s tree/sub; moira --du -k -s tree/deep; } >both.out && cat bo
 $ moira --du -a -s tree 2>&1 | head -1
 moira: -a cannot be combined with -s or -d: tree
 ```
+
+```scrut
+$ moira --version
+moira *.*.* (glob)
+```

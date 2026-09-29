@@ -1,12 +1,13 @@
 const std = @import("std");
 const Io = std.Io;
 const moira = @import("moira");
+const build_options = @import("build_options");
 const cli = moira.cli;
 
 const usage =
     \\usage: moira [-Aclnx] [-H | -L | -P] [-g | -h | -k | -m] [-a | -s | -d depth]
     \\             [-B blocksize] [-I mask] [-t threshold]
-    \\             [--share | --exclusive | --pinned | --allocated] [--du | --columns] [file ...]
+    \\             [--share | --exclusive | --pinned | --allocated] [--du | --columns] [--version] [file ...]
     \\
     \\Flags follow du(1). The du column reports one metric:
     \\  --share      each entry's fair portion of blocks shared through clones or hard links (default)
@@ -35,6 +36,11 @@ pub fn main(init: std.process.Init) !u8 {
         return 1;
     };
     defer options.deinit(init.gpa);
+    if (options.version) {
+        try out.interface.print("moira {s}\n", .{build_options.version});
+        try out.flush();
+        return 0;
+    }
     if (options.help) {
         try out.interface.writeAll(usage);
         try out.flush();

@@ -10,6 +10,9 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
+    const options = b.addOptions();
+    options.addOption([]const u8, "version", @import("build.zig.zon").version);
+
     const exe = b.addExecutable(.{
         .name = "moira",
         .root_module = b.createModule(.{
@@ -19,6 +22,7 @@ pub fn build(b: *std.Build) void {
             .imports = &.{.{ .name = "moira", .module = moira }},
         }),
     });
+    exe.root_module.addOptions("build_options", options);
     b.installArtifact(exe);
 
     const run = b.addRunArtifact(exe);
