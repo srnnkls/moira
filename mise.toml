@@ -7,12 +7,26 @@ zig = "0.16.0"
 run = "zig build -Doptimize=ReleaseSafe"
 
 [tasks.test]
-description = "Run unit tests in Debug and ReleaseSafe"
-run = ["zig build test", "zig build test -Doptimize=ReleaseSafe"]
-
-[tasks.test-integration]
-description = "Run scrut suites against the ReleaseSafe binary (one process per doc, in parallel)"
-run = [
-  "zig build -Doptimize=ReleaseSafe",
-  "export PATH=\"$PWD/zig-out/bin:$PATH\"; printf '%s\\n' tests/scrut/*.md | xargs -P0 -n1 scrut test",
-]
+description = "Run the selected suites; all of them without flags"
+usage = '''
+flag "--fmt" help="zig fmt --check"
+flag "--unit" help="Unit tests in Debug and ReleaseSafe"
+flag "--integration" help="scrut suites against the ReleaseSafe binary"
+'''
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+selected() { [[ "${usage_fmt:-false}${usage_unit:-false}${usage_integration:-false}" == falsefalsefalse || "$1" == true ]]; }
+if selected "${usage_fmt:-false}"; then
+  zig fmt --check src build.zig
+fi
+if selected "${usage_unit:-false}"; then
+  zig build test
+  zig build test -Doptimize=ReleaseSafe
+fi
+if selected "${usage_integration:-false}"; then
+  zig build -Doptimize=ReleaseSafe
+  export PATH="$PWD/zig-out/bin:$PATH"
+  printf '%s\n' tests/scrut/*.md | xargs -P0 -n1 scrut test
+fi
+'''

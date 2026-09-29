@@ -122,6 +122,6 @@ the file's extents.
 ## Development
 
 ```sh
-mise run test              # unit tests, Debug and ReleaseSafe
-mise run test-integration  # scrut suites: du parity, metrics, the fas rule
+mise run test                      # everything
+mise run test --unit --integration  # any combination of --fmt, --unit, --integration
 ```
