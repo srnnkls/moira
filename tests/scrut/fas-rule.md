@@ -12,7 +12,7 @@ $ source "$TESTDIR"/_setup.sh
 ## Fires on du
 
 ```scrut
-$ fas_hint 'du -sh ~/projects'
+$ fas_hint 'du -sh build'
 HINT: On APFS `du` charges every clone and hard link in full and cannot see space a snapshot holds. `moira` prints what du prints and takes its flags; add `-S` for each entry's fair share, `-E` for what deleting frees, `-p` for what a snapshot still holds, or `-C` for all of them.
 ```
 

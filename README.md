@@ -51,9 +51,9 @@ actually holds, in the same shape. For a directory, `-sh` prints what `du` print
 fair share of shared blocks, and `-Esh` what deleting it frees:
 
 ```sh
-moira -sh ~/Library/Caches/kache
-moira -Ssh ~/Library/Caches/kache
-moira -Esh ~/Library/Caches/kache
+moira -sh build
+moira -Ssh build
+moira -Esh build
 ```
 
 `-C` prints every metric side by side:
@@ -146,7 +146,7 @@ attributes the printed metric needs; the terminal hint adds the clone flags. War
 | `moira -C -s` | 314 ms | 2128 ms |
 
 The table reads every file's private size for the pinned column, which makes APFS walk
-the file's extents. `mise run bench ~/projects/ghostty ~/.config` reproduces the table.
+the file's extents. `mise run bench <dir>...` times the same commands on your own trees.
 
 ## Development
 
