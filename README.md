@@ -29,6 +29,15 @@ Requires macOS and Zig 0.16.0 (pinned in `mise.toml`).
 mise exec -- zig build -Doptimize=ReleaseSafe --prefix ~/.local
 ```
 
+To use it in place of `du`:
+
+```sh
+(( $+commands[moira] )) && alias du=moira   # zsh; output stays byte-identical
+```
+
+Agent shells such as Claude Code's inherit zshrc aliases, so agents running `du` get moira
+too; the [fas rule](#agents) tells them about `-S`, `-E` and `-p`.
+
 ## Usage
 
 `moira` is `du`: same flags, same output, byte for byte. One more letter switches the
@@ -81,9 +90,9 @@ all clones are split as if every clone held them.
 
 `moira` matches macOS `du` byte for byte across `-a -s -d -c -k -m -g -h --si -A -B -l -I -t
 -x -H -L -P` and `BLOCKSIZE`; `tests/scrut/du-parity.md` checks each against the system `du`.
-Its own letters, `-S -E -p -C`, are unused by `du`, so `alias du=moira` is safe. One
-deliberate difference: `du` prints nothing for a negative `-t`, contrary to its manual; moira
-shows the directories smaller than the threshold.
+Its own letters, `-S -E -p -C`, are unused by `du`, which keeps the [alias](#installation)
+safe. One deliberate difference: `du` prints nothing for a negative `-t`, contrary to its
+manual; moira shows the directories smaller than the threshold.
 
 ## Agents
 
