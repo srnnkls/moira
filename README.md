@@ -146,7 +146,7 @@ attributes the printed metric needs; the terminal hint adds the clone flags. War
 | `moira -C -s` | 314 ms | 2128 ms |
 
 The table reads every file's private size for the pinned column, which makes APFS walk
-the file's extents.
+the file's extents. `mise run bench ~/projects/ghostty ~/.config` reproduces the table.
 
 ## Development
 

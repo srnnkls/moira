@@ -2,6 +2,7 @@
 zig = "0.16.0"
 "github:facebookincubator/scrut" = "0.4.3"
 "github:srnnkls/fas" = "0.1.0-alpha.11"
+hyperfine = "1.20.0"
 
 [tasks.build]
 run = "zig build -Doptimize=ReleaseSafe"
@@ -29,4 +30,20 @@ if selected "${usage_integration:-false}"; then
   export PATH="$PWD/zig-out/bin:$PATH"
   printf '%s\n' tests/scrut/*.md | xargs -P0 -n1 scrut test
 fi
+'''
+
+[tasks.bench]
+description = "Time du against each moira mode on the given trees"
+usage = '''
+arg "<path>..." help="Directory trees to measure"
+'''
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+zig build -Doptimize=ReleaseSafe
+moira="$PWD/zig-out/bin/moira"
+for tree in $usage_path; do
+  hyperfine -N --warmup 2 --runs 8 \
+    "du -s $tree" "$moira -s $tree" "$moira -S -s $tree" "$moira -C -s $tree"
+done
 '''
