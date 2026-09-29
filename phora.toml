@@ -1,0 +1,7 @@
+[sources.moira]
+path = "."
+include = ["rules/fas/**"]
+
+[targets.moira]
+path = "."
+sources.moira = { collapse = false }

@@ -73,9 +73,55 @@ all clones are split as if every clone held them.
 against the system `du`. One deliberate difference: `du` prints nothing for a negative `-t`,
 contrary to its manual; moira shows the directories smaller than the threshold.
 
+## Agents
+
+Coding agents reach for `du` and trust its numbers. moira ships a
+[fas](https://github.com/srnnkls/fas) rule, `rules/fas/du.cue`, that answers every `du`
+an agent runs with what `du` misses on APFS and the moira flag that covers it:
+
+```cue
+du_hint: {
+	when: hook.#PreToolUse & tool.#Bash & (bash.#command & {#name: "du"})
+	then: inject: {
+		rule_id: "du-apfs-hint"
+		channel: "agent"
+		text:    "HINT: On APFS `du` charges every clone and hard link in full ..."
+	}
+}
+```
+
+The rule is offered through [phora](https://github.com/srnnkls/phora). Bind it into a
+fas rules directory:
+
+```toml
+[sources.moira]
+git = "https://github.com/srnnkls/moira.git"
+branch = "main"
+root = "rules/fas"
+
+[targets.fas-rules]
+path = "~/.config/fas/rules/moira"
+sources.moira = { collapse = false }
+```
+
+## Performance
+
+moira reads each directory with one `getattrlistbulk(2)` call and requests only the
+attributes the printed metric needs. Warm cache, `hyperfine`, Apple silicon, macOS 26.5:
+
+| Command | 38k files | 130k files |
+|---------|----------:|-----------:|
+| `du -s` | 192 ms | 1589 ms |
+| `moira --allocated -s` | 137 ms | 1208 ms |
+| `moira --share -s` | 166 ms | 1353 ms |
+| `moira --columns -s` | 314 ms | 2128 ms |
+
+The table reads every file's private size for the pinned column, which makes APFS walk
+the file's extents.
+
 ## Development
 
 ```sh
 mise run test              # unit tests, Debug and ReleaseSafe
-mise run test-integration  # scrut suites against the ReleaseSafe binary
+mise run test-integration  # scrut suites: du parity, metrics, the fas rule
 ```

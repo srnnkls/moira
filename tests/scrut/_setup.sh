@@ -32,3 +32,11 @@ du_parity() {
 	moira --du --allocated "$@" 2>&1 | sed 's/^moira:/du:/' >actual.out
 	diff expected.out actual.out
 }
+
+fas_hint() {
+	jq -nc --arg command "$1" '{
+		session_id: "scrut", transcript_path: "/dev/null", cwd: "/tmp",
+		hook_event_name: "PreToolUse", tool_name: "Bash", tool_input: {command: $command}
+	}' | fas eval --global-config "$TESTDIR/../../rules/fas" --config /nonexistent 2>/dev/null |
+		jq -r '.hookSpecificOutput.additionalContext // "no hint"'
+}
