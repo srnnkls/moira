@@ -23,7 +23,13 @@ between runs.
 
 ## Installation
 
-Requires macOS and Zig 0.16.0 (pinned in `mise.toml`).
+moira runs on macOS. Install a release with [mise](https://mise.jdx.dev):
+
+```sh
+mise use -g github:srnnkls/moira
+```
+
+Or build from source with Zig 0.16.0 (pinned in `mise.toml`):
 
 ```sh
 mise exec -- zig build -Doptimize=ReleaseSafe --prefix ~/.local
