@@ -1,0 +1,28 @@
+version: 2
+
+project_name: moira
+
+builds:
+  - id: moira
+    builder: zig
+    binary: moira
+    targets: [aarch64-macos, x86_64-macos]
+    flags: [-Doptimize=ReleaseSafe]
+
+archives:
+  - id: moira
+    formats: [tar.gz]
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}_macos_
+      {{- if eq .Arch "amd64" }}x86_64{{ else }}{{ .Arch }}{{ end }}
+    files:
+      - README.md
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  disable: true
+
+release:
+  mode: keep-existing
