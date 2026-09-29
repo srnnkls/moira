@@ -8,9 +8,10 @@
 
 ## About
 
-moira is `du` for APFS. On APFS, `cp` clones files, build caches clone their artifacts, and
-Time Machine keeps hourly local snapshots, so the number `du` prints is not what deleting a
-directory frees. `du` charges every clone in full and says nothing about snapshots.
+moira is `du` for APFS. On APFS, `cp -c` and GNU `cp` (reflink by default since
+coreutils 9) clone files, build caches clone their artifacts, and Time Machine
+keeps hourly local snapshots, so the number `du` prints is not what deleting a directory
+frees. `du` charges every clone in full and says nothing about snapshots.
 
 moira charges each file its share of the blocks it holds. Clones split what they still have
 in common, a rewritten clone owns its rewritten blocks, and hard links split their inode.
