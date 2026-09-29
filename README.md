@@ -35,10 +35,10 @@ Or build from source with Zig 0.16.0 (pinned in `mise.toml`):
 mise exec -- zig build -Doptimize=ReleaseSafe --prefix ~/.local
 ```
 
-To use it in place of `du`:
+To use it in place of `du` in zsh:
 
 ```sh
-(( $+commands[moira] )) && alias du=moira   # zsh; output stays byte-identical
+(( $+commands[moira] )) && alias du=moira
 ```
 
 Agent shells such as Claude Code's inherit zshrc aliases, so agents running `du` get moira
@@ -46,13 +46,14 @@ too; the [fas rule](#agents) tells them about `-S`, `-E` and `-p`.
 
 ## Usage
 
-`moira` is `du`: same flags, same output, byte for byte. One more letter switches the
-number to what APFS actually holds, in the same shape:
+`moira` is `du`: same flags, same output. One more letter switches the number to what APFS
+actually holds, in the same shape. For a directory, `-sh` prints what `du` prints, `-Ssh` its
+fair share of shared blocks, and `-Esh` what deleting it frees:
 
 ```sh
-moira -sh ~/Library/Caches/kache    # what du prints
-moira -Ssh ~/Library/Caches/kache   # its fair share of shared blocks
-moira -Esh ~/Library/Caches/kache   # what deleting it frees
+moira -sh ~/Library/Caches/kache
+moira -Ssh ~/Library/Caches/kache
+moira -Esh ~/Library/Caches/kache
 ```
 
 `-C` prints every metric side by side:
@@ -94,7 +95,7 @@ all clones are split as if every clone held them.
 
 ## du compatibility
 
-`moira` matches macOS `du` byte for byte across `-a -s -d -c -k -m -g -h --si -A -B -l -I -t
+`moira` prints what macOS `du` prints across `-a -s -d -c -k -m -g -h --si -A -B -l -I -t
 -x -H -L -P` and `BLOCKSIZE`; `tests/scrut/du-parity.md` checks each against the system `du`.
 Its own letters, `-S -E -p -C`, are unused by `du`, which keeps the [alias](#installation)
 safe. One deliberate difference: `du` prints nothing for a negative `-t`, contrary to its
@@ -149,7 +150,10 @@ the file's extents.
 
 ## Development
 
+`mise run test` runs every suite; any combination of `--fmt`, `--unit` and `--integration`
+selects some:
+
 ```sh
-mise run test                      # everything
-mise run test --unit --integration  # any combination of --fmt, --unit, --integration
+mise run test
+mise run test --unit --integration
 ```
