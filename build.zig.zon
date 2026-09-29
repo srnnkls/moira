@@ -1,6 +1,6 @@
 .{
     .name = .moira,
-    .version = "0.0.1", // x-release-please-version
+    .version = "0.1.0", // x-release-please-version
     .minimum_zig_version = "0.16.0",
     .paths = .{""},
     .fingerprint = 0xa47f19a13f8fd27d,
