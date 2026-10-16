@@ -1,7 +1,7 @@
 [tools]
 zig = "0.16.0"
 "github:facebookincubator/scrut" = "0.4.3"
-"github:srnnkls/fas" = "0.1.0-alpha.11"
+"github:srnnkls/fas" = "0.1.0-alpha.15"
 hyperfine = "1.20.0"
 
 [tasks.build]
